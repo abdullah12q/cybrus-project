@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- title -->
+    <title>Fruitkha</title>
+
+    <!-- favicon -->
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="{{url_for('static',filename='assets/img/favicon.png')}}"
+    />
+    <!-- google font -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- fontawesome -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='assets/css/all.min.css') }}"
+    />
+    <!-- bootstrap -->
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='assets/bootstrap/css/bootstrap.min.css')}}"
+    />
+    <!-- main style -->
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='assets/css/main.css')}}"
+    />
+  </head>
+
+  <body>
+    <!-- header -->
+    <div class="top-header-area" id="sticker">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 col-sm-12 text-center">
+            <div class="main-menu-wrap">
+              <!-- logo -->
+              <div class="site-logo">
+                <a href="/">
+                  <img src="static/assets/img/logo.png" alt="" />
+                </a>
+              </div>
+              <!-- logo -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end header -->
+
+    <!-- hero area -->
+    <div class="hero-area hero-bg">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-9 offset-lg-2 text-center">
+            <div class="hero-text">
+              <div class="hero-text-tablecell">
+                <p class="subtitle">Fresh & Organic</p>
+                <h1>Delicious Seasonal Fruits</h1>
+                <div class="hero-btns">
+                  <a href="{{ url_for('sign_up') }}" class="boxed-btn"
+                    >Sign Up</a
+                  >
+                  <a href="{{ url_for('login') }}" class="bordered-btn"
+                    >Login</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end hero area -->
+  </body>
+</html>
