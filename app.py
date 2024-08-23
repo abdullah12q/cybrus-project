@@ -103,4 +103,6 @@ def logout():
 if __name__ == "__main__":
   db.init_db(connection)
   db.init_product(connection)
-  app.run(debug=True)
+  app.run(debug=True,port=8000)
+
+
