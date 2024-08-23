@@ -37,6 +37,11 @@
       rel="stylesheet"
       href="{{url_for('static',filename='assets/css/main.css')}}"
     />
+    <!-- responsive -->
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='assets/css/responsive.css')}}"
+    />
   </head>
 
   <body>
@@ -70,7 +75,7 @@
                 <p class="subtitle">Fresh & Organic</p>
                 <h1>Delicious Seasonal Fruits</h1>
                 <div class="hero-btns">
-                  <a href="{{ url_for('sign_up') }}" class="boxed-btn"
+                  <a href="{{ url_for('sign_up') }}" class="bordered-btn"
                     >Sign Up</a
                   >
                   <a href="{{ url_for('login') }}" class="bordered-btn"

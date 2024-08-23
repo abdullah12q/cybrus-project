@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up</title>
-
+    <title>Login</title>
     <!-- favicon -->
     <link
       rel="shortcut icon"
@@ -74,29 +73,13 @@
     <!-- hero area -->
     <section>
       <div class="wrapper hero-bg">
-        <h2>Sign Up</h2>
+        <h2>Login</h2>
         {% include 'includes/alert.html' %}
-        <form action="/signup" method="POST">
-          <div class="input-box">
-            <input
-              type="name"
-              placeholder="Enter your first name"
-              required
-              name="first_name"
-            />
-          </div>
-          <div class="input-box">
-            <input
-              type="name"
-              placeholder="Enter your last name"
-              required
-              name="last_name"
-            />
-          </div>
+        <form action="/home" method="POST">
           <div class="input-box">
             <input
               type="text"
-              placeholder="Create username"
+              placeholder="Enter your username"
               required
               name="username"
             />
@@ -104,18 +87,18 @@
           <div class="input-box">
             <input
               type="password"
-              placeholder="Create password"
+              placeholder="Enter your password"
               required
               name="password"
             />
           </div>
           <div class="input-box button">
-            <input type="Submit" value="Sign Up" />
+            <input type="Submit" value="Login" />
           </div>
           <div class="text">
             <h3>
-              Already have an account?
-              <a href="{{ url_for('login') }}">Login now</a>
+              Not a member?
+              <a href="{{ url_for('sign_up') }}">Sign up now</a>
             </h3>
           </div>
         </form>
