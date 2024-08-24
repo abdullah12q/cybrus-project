@@ -73,12 +73,23 @@
                 <a href="/">
                   <img src="static/assets/img/logo.png" alt="" />
                 </a>
-                {% if (username in session) or (username =='admin') %}
-                <a href="/logout" style="color: white"> Logout </a>
+                {% if ('username' in session) or (username =='admin') %}
+                <a href="/logout" style="color: white; margin-right: 100px">
+                  Logout
+                </a>
                 {% endif %}
               </div>
               <!-- logo -->
-              {% if username not in session %} {% if username !='admin'%}
+              {% if 'username' in session %} {% if username !='admin'%}
+              <a href="/profile" style="color: #f28123"> Profile </a>
+              <a
+                class="shopping-cart"
+                href="cart.html"
+                style="color: #f28123; margin: 0 25px"
+                ><i class="fas fa-shopping-cart"></i
+              ></a>
+              {% endif %} {% endif %} {% if 'username' not in session %} {% if
+              username !='admin'%}
               <a href="/signup" style="color: #f28123"> Signup </a>
               <a href="/login" style="color: #f28123; margin: 0 25px">
                 Login
@@ -110,7 +121,7 @@
     <!-- end breadcrumb section -->
 
     <!-- products -->
-    {% include 'includes/alert.html' %} {% if username not in session %} {% if
+    {% include 'includes/alert.html' %} {% if 'username' not in session %} {% if
     username !="admin" %}
     <div
       class="alert alert-info alert-dismissible"
@@ -153,9 +164,13 @@
     </div>
     <!-- end products -->
     <!-- end hero area -->
-    {% endfor %} {% else %} {% if (username in session) or (username
+    {% endfor %} {% else %} {% if ('username' in session) or (username
     =='admin')%}
-    <div class="alert alert-warning alert-dismissible" role="alert">
+    <div
+      class="alert alert-warning alert-dismissible"
+      role="alert"
+      style="text-align: center"
+    >
       No products found!
     </div>
     {% endif %} {% endif %}

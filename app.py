@@ -76,10 +76,10 @@ def login():
 
 @app.route('/home', methods=['GET', 'POST'])
 def products():
-  if ('username' in session) or (session['username'] =='admin'):
-    if request.method == 'POST':
+  if 'username' in session:
+    if (request.method == 'POST') or (request.method == 'GET'):
       return render_template('products.html', products = db.get_all_products(connection), username = session['username'])
-  return redirect(url_for(login))
+  return redirect(url_for('login'))
 
 # @app.route('/addproduct', methods=['GET', 'POST'])
 # def add_product():
