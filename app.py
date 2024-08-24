@@ -76,7 +76,7 @@ def login():
 
 @app.route('/home', methods=['GET', 'POST'])
 def products():
-  if 'username' in session:
+  if ('username' in session) or (session['username'] =='admin'):
     if request.method == 'POST':
       return render_template('products.html', products = db.get_all_products(connection), username = session['username'])
   return redirect(url_for(login))
