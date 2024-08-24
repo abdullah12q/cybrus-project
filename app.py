@@ -17,7 +17,7 @@ default_limits=["50 per minute"], storage_uri="memory://"
 
 @app.route("/")
 def index():
-  return render_template("products.html")
+  return render_template("index.html")
 
 @app.route('/signup', methods=['GET', 'POST'])
 @limiter.limit("10 per minute")
