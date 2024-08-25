@@ -14,8 +14,8 @@ def init_db(connection):
 	cursor.execute('''
 		CREATE TABLE IF NOT EXISTS users (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-            first_name TEXT NOT NULL,
-            last_name TEXT NOT NULL,
+            first_name TEXT,
+            last_name TEXT,
 			username TEXT NOT NULL UNIQUE,
 			password TEXT NOT NULL
 		)
@@ -23,13 +23,15 @@ def init_db(connection):
 
 	connection.commit()
 
-def seed_admin_user(username,password):
+def seed_admin_user(connection):
     admin_username = 'admin'
     admin_password = 'admin'
 
-    if username==admin_username and password==admin_password:
-        return True
-    return False
+    # Check if admin user exists
+    admin_user = get_user(connection, admin_username)
+    if not admin_user:
+        add_user(connection, '', '', admin_username, admin_password)
+        print("Admin user seeded successfully.")
 
 def add_user(connection,first_name,last_name,username,password):
     cursor = connection.cursor()
@@ -44,6 +46,11 @@ def get_user(connection,username):
     cursor.execute(query, (username,))
     return cursor.fetchone()
 
+def delete_user(connection,username):
+    cursor = connection.cursor()
+    query = 'DELETE FROM users WHERE username =?'
+    cursor.execute(query, (username,))
+    connection.commit()
 
 def get_all_users(connection):
 	cursor = connection.cursor()

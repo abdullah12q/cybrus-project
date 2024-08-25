@@ -95,7 +95,15 @@
                 Login
               </a>
               {% endif %} {% endif %} {% if username == 'admin'%}
-              <a href="/addproduct" style="color: #f28123"> Add product </a>
+              <a
+                href="{{ url_for('users', user = username) }}"
+                style="color: #f28123"
+              >
+                Users
+              </a>
+              <a href="/addproduct" style="color: #f28123; margin: 0 25px">
+                Add product
+              </a>
               {% endif %}
             </div>
           </div>

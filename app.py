@@ -55,10 +55,6 @@ def login():
     password = request.form['password']
 
     user = db.get_user(connection, username)
-    
-    if db.seed_admin_user(username, password):
-      session["username"] = username
-      return render_template("products.html", products=db.get_all_products(connection) , username=session['username'])
 
     if user:
       if utils.is_password_match(password, user[4]):
@@ -74,11 +70,19 @@ def login():
 
   return render_template('login.html')
 
-@app.route('/home', methods=['GET', 'POST'])
+@app.route('/users')
+def users(username):
+  if username == 'admin':
+    users = db.get_all_users(connection)
+    if len(users) == 0:
+      flash("No users found", "info")
+      return render_template('users.html')
+    return render_template('users.html', users=users)
+
+@app.route('/home')
 def products():
   if 'username' in session:
-    if (request.method == 'POST') or (request.method == 'GET'):
-      return render_template('products.html', products = db.get_all_products(connection), username = session['username'])
+    return render_template('products.html', products = db.get_all_products(connection), username = session['username'])
   return redirect(url_for('login'))
 
 # @app.route('/addproduct', methods=['GET', 'POST'])
@@ -103,6 +107,7 @@ def logout():
 if __name__ == "__main__":
   db.init_db(connection)
   db.init_product(connection)
+  db.seed_admin_user(connection)
   app.run(debug=True,port=8000)
 
 
