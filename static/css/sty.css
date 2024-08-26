@@ -1,13 +1,17 @@
 body {
     background-color: #f4f4f9;
     font-family: 'Roboto', sans-serif;
+    background-image: url(../assets/img/hero-bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
     color: #333;
     margin: 0;
     padding: 0;
 }
 
 .navbar {
-    background-color: #343a40;
+    /* background-color: #343a40; */
+    background-color: orange;
     color: #fff;
     padding: 1rem 2rem;
     display: flex;
@@ -19,7 +23,8 @@ body {
 .navbar .brand {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #e9ecef;
+    /* color: #e9ecef; */
+    color: black;
     flex-grow: 1;
 }
 
@@ -35,7 +40,8 @@ body {
 }
 
 .navbar .nav-links a {
-    color: #e9ecef;
+    /* color: #e9ecef; */
+    color: black;
     text-decoration: none;
     font-size: 1.1rem;
     transition: color 0.3s, transform 0.3s;
@@ -58,7 +64,8 @@ body {
     margin: 0 -1rem;
 }
 
-.col-xl-4, .col-xl-8 {
+.col-xl-4,
+.col-xl-8 {
     padding: 1rem;
     box-sizing: border-box;
 }
@@ -99,7 +106,8 @@ body {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    color: #007bff;
+    /* color: #007bff; */
+    color: orange;
 }
 
 .text-center {
@@ -107,7 +115,8 @@ body {
 }
 
 .text-muted {
-    color: #6c757d;
+    /* color: #6c757d; */
+    color: orange;
 }
 
 .small {
@@ -135,11 +144,13 @@ body {
 }
 
 .form-control:focus {
-    border-color: #007bff;
+    /* border-color: #007bff; */
+    border-color: orange;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-.btn-primary, .btn-remove {
+.btn-primary,
+.btn-remove {
     border: none;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
@@ -149,13 +160,16 @@ body {
 }
 
 .btn-primary {
-    background-color: #007bff;
+    /* background-color: #007bff; */
+    background-color: orange;
     color: #fff;
     margin-right: 0.5rem;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
+    /* background-color: #0056b3; */
+    background-color: #051922;
+    color: #F28123;
     transform: scale(1.05);
 }
 
@@ -180,7 +194,8 @@ hr {
     height: 120px;
     width: 120px;
     object-fit: cover;
-    border: 4px solid #007bff;
+    /* border: 4px solid #007bff; */
+    border: 4px solid orange;
     border-radius: 50%;
     margin-bottom: 1rem;
     display: block;

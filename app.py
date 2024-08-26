@@ -4,10 +4,13 @@ import db
 import utils
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+# from flask_login import login_user, current_user, logout_user, login_required
 import validators         
 import os
+import logging
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
 connection = db.connect_to_database()
 app.secret_key = "d5afjsfgsatkd7aea7dfidfk6rdsj9od"
 limiter = Limiter(
@@ -76,7 +79,7 @@ def users():
     users = db.get_all_users(connection)
     if len(users) <= 1:
       flash("No users found", "info")
-      return render_template(url_for('products'))
+      return redirect(url_for('products'))
     return render_template('users.html', users=users)
 
 @app.route('/delete-user/id=<user_id>')
@@ -109,17 +112,28 @@ def add_to_cart(product_id):
     return redirect(url_for('login'))
   
   user = db.get_user(connection, session['username'])
-  db.add_to_cart(connection, user[0], product_id)
   
-  flash('The product added successfully', 'succes')
-  return render_template('products.html', products = db.get_all_products(connection), username = session['username'])
+  cart_products = db.get_cart(connection, user[0])
+  cart_product_ids = [item[0] for item in cart_products]
+  
+  if product_id in cart_product_ids:
+    flash('This product already exists in your cart', 'warning')
+    return redirect(url_for('products'))
+
+  else:
+    db.add_to_cart(connection, user[0], product_id)
+    flash('The product added to cart successfully', 'success')
+    # return render_template('products.html', products = db.get_all_products(connection), username = session['username'])
+    return redirect(url_for('products'))
 
 
 @app.route('/remove_from_cart/<int:product_id>')
 def remove_from_cart(product_id):
   user = db.get_user(connection, session['username'])
   db.remove_from_cart(connection,user[0], product_id)
-  flash('The product removed successfully', 'succes')
+  
+  if not session.pop('bought_product', False):
+    flash('The product removed from cart successfully', 'success')
   # return render_template('cart.html', cart_products = db.get_cart(connection, user[0]))
   return redirect(url_for('cart'))
 
@@ -127,6 +141,9 @@ def remove_from_cart(product_id):
 def buy_product(product_id):
     if 'username' in session:
         flash(f'Purchase successful! You paid ${db.get_product(connection, product_id)[2]}!', 'success')
+        
+        session['bought_product'] = True
+        
         return redirect(url_for('remove_from_cart', product_id=product_id))
 
     else:
@@ -182,18 +199,44 @@ def add_product():
     return redirect(url_for("products"))
   return render_template("addProduct.html")
 
-
-# @app.route('/product/id=<product_id>')
-# def get_product(product_id):
-
-
 @app.route('/delete-product/id=<product_id>')
 def delete_product(product_id):
   db.delete_product(connection, product_id)
   flash('Product deleted successfully', 'success')
   return redirect(url_for('products'))
 
+@app.route('/account', methods=['GET', 'POST'])
+def account():
+  if 'username' in session:
 
+    if request.method == 'GET':
+      username = request.args.get('username', session['username'])
+      data = db.get_user(connection, username)
+      if data:
+        logging.debug(f"User data: {data}")  # or log the data to see its structure
+        return render_template('account.html', data=data)
+      else:
+        return "user not found"
+    elif request.method == 'POST':
+      form_type = request.form.get('form_name')
+      username = request.args.get('username', session['username'])  
+      if form_type == 'upload_photo':
+        photo = request.files.get('profile_picture')
+        if photo:
+          db.update_photo(connection, photo.filename, username)
+          photo.save(os.path.join(app.config['UPLOAD_FOLDER'], photo.filename))# static/uploads/xyz.png
+      elif form_type == 'update_user_data':
+        user_data = { 
+          "username": request.form.get('username'), 
+          "first_name": request.form.get('first_name'),
+          "last_name": request.form.get('last_name')
+        }
+        db.update_user(connection , user_data)
+
+      data = db.get_user(connection, username)
+      return render_template('account.html', data=data) 
+  else:
+    return redirect(url_for('login'))
 
 @app.route("/logout")
 def logout():

@@ -17,7 +17,8 @@ def init_db(connection):
             first_name TEXT,
             last_name TEXT,
 			username TEXT NOT NULL UNIQUE,
-			password TEXT NOT NULL
+			password TEXT NOT NULL,
+            photo_name TEXT
 		)
 	''')
 
@@ -58,6 +59,18 @@ def get_all_users(connection):
 	cursor.execute(query)
 	return cursor.fetchall()
 
+def update_user(connection , user_data):
+    cursor = connection.cursor()
+    query = ''' UPDATE users set first_name = ? , last_name = ? WHERE username = ? '''
+    cursor.execute(query,(user_data['first_name'] , user_data['last_name'] , user_data['username']))
+    connection.commit() 
+
+
+def update_photo(connection, filename , username):
+    cursor = connection.cursor()  
+    query = '''UPDATE users SET photo_name = ? WHERE username = ?'''
+    cursor.execute(query, (filename,username))  
+    connection.commit() 
 
 # --------------------------------- DATABASE FOR PRODUCTS ----------------------------------
 
