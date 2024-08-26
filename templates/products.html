@@ -25,6 +25,15 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='assets/css/all.min.css') }}"
     />
+    <!-- Form Styling And Flash -->
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='css/bootstrap.min.css')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='css/style.css')}}"
+    />
     <!-- bootstrap -->
     <link
       rel="stylesheet"
@@ -73,18 +82,12 @@
                 <a href="/">
                   <img src="static/assets/img/logo.png" alt="" />
                 </a>
-                {% if ('username' in session) or (username =='admin') %}
-                <a href="/logout" style="color: white; margin-right: 100px">
-                  Logout
-                </a>
-                {% endif %}
               </div>
               <!-- logo -->
               {% if 'username' in session %} {% if username !='admin'%}
-              <a href="/profile" style="color: #f28123"> Profile </a>
               <a
                 class="shopping-cart"
-                href="cart.html"
+                href="/cart"
                 style="color: #f28123; margin: 0 25px"
                 ><i class="fas fa-shopping-cart"></i
               ></a>
@@ -95,14 +98,14 @@
                 Login
               </a>
               {% endif %} {% endif %} {% if username == 'admin'%}
-              <a
-                href="{{ url_for('users', user = username) }}"
-                style="color: #f28123"
-              >
-                Users
-              </a>
-              <a href="/addproduct" style="color: #f28123; margin: 0 25px">
+              <a href="/users" style="color: #f28123"> Users </a>
+              <a href="/addProduct" style="color: #f28123; margin: 0 25px">
                 Add product
+              </a>
+              {% endif %} {% if ('username' in session) or (username =='admin')
+              %}
+              <a href="/logout" style="color: #f28123; margin-right: 100px">
+                Logout
               </a>
               {% endif %}
             </div>
@@ -129,59 +132,65 @@
     <!-- end breadcrumb section -->
 
     <!-- products -->
-    {% include 'includes/alert.html' %} {% if 'username' not in session %} {% if
-    username !="admin" %}
+    {% include 'includes/alert.html' %} {% if 'username' not in session and
+    username != "admin" %}
     <div
       class="alert alert-info alert-dismissible"
       role="alert"
       style="text-align: center"
     >
-      To view the shop and buy you have to be logged in !
+      To view the shop and buy you have to be logged in!
     </div>
-    {% endif %} {% endif %} {% if products %} {% for product in products%}
+    {% else %}
     <div class="product-section mt-150 mb-150">
       <div class="container">
         <div class="row product-lists">
+          {% if products %} {% for product in products %}
           <div class="col-lg-4 col-md-6 text-center">
             <div class="single-product-item">
               <div class="product-image">
-                <a href=""
-                  ><img
+                <a href="">
+                  <img
                     src="{{ url_for('static', filename=product[3]) }}"
                     alt=""
-                /></a>
+                  />
+                </a>
               </div>
               <h3>{{ product[1] }}</h3>
-              <p class="product-price"><span>Per Kg</span> {{ product[2] }}$</p>
+              <p class="product-price"><span>Per Kg</span> ${{ product[2] }}</p>
+              {% if username != 'admin' %}
               <a
-                href="{{ url_for('get_product', product_id=product[0]) }}"
+                href="{{ url_for('add_to_cart', product_id=product[0]) }}"
                 class="cart-btn"
-                ><i class="fas fa-shopping-cart"></i> Add to Cart</a
               >
-              {% if username == 'admin' %}
+                <i class="fas fa-shopping-cart"></i> Add to Cart
+              </a>
+              {% endif %} {% if username == 'admin' %}
               <a
                 href="{{ url_for('delete_product', product_id=product[0]) }}"
-                class="delete-btn"
-                ><i class="fas fa-trash-alt"></i> Delete</a
+                class="cart-btn"
+                style="background: red; margin: 0 10px"
               >
+                <i class="fas fa-trash-alt"></i> Delete
+              </a>
               {% endif %}
             </div>
           </div>
+          {% endfor %} {% else %}
+          <div
+            class="alert alert-warning alert-dismissible"
+            role="alert"
+            style="text-align: center"
+          >
+            No products found!
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>
+    {% endif %}
     <!-- end products -->
     <!-- end hero area -->
-    {% endfor %} {% else %} {% if ('username' in session) or (username
-    =='admin')%}
-    <div
-      class="alert alert-warning alert-dismissible"
-      role="alert"
-      style="text-align: center"
-    >
-      No products found!
-    </div>
-    {% endif %} {% endif %}
 
     <!-- jquery -->
     <script src="assets/js/jquery-1.11.3.min.js"></script>
@@ -203,5 +212,8 @@
     <script src="assets/js/sticker.js"></script>
     <!-- main js -->
     <script src="assets/js/main.js"></script>
+    <!-- For Flash -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/close-all-alerts.js') }}"></script>
   </body>
 </html>

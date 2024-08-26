@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up</title>
+    <title>Users</title>
 
     <!-- favicon -->
     <link
@@ -49,6 +49,27 @@
       rel="stylesheet"
       href="{{url_for('static',filename='css/style.css')}}"
     />
+
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        padding: 8px 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+      td {
+        vertical-align: middle;
+      }
+    </style>
   </head>
   <body class="hero-bg">
     <!-- header -->
@@ -73,54 +94,46 @@
 
     <!-- hero area -->
     <section>
-      <div class="wrapper hero-bg">
+      <div class="wrapper hero-bg" style="max-width: 980px; height: auto">
         <h2>Users</h2>
         {% include 'includes/alert.html' %}
-        <form action="/signup" method="POST">
-          <div class="input-box">
-            <input
-              type="name"
-              placeholder="Enter your first name"
-              required
-              name="first_name"
-            />
-          </div>
-          <div class="input-box">
-            <input
-              type="name"
-              placeholder="Enter your last name"
-              required
-              name="last_name"
-            />
-          </div>
-          <div class="input-box">
-            <input
-              type="text"
-              placeholder="Create username"
-              required
-              name="username"
-            />
-          </div>
-          <div class="input-box">
-            <input
-              type="password"
-              placeholder="Create password"
-              required
-              name="password"
-            />
-          </div>
-          <div class="input-box button">
-            <input type="Submit" value="Sign Up" />
-          </div>
-          <div class="text">
-            <h3>
-              Already have an account?
-              <a href="{{ url_for('login') }}">Login now</a>
-            </h3>
-          </div>
-        </form>
+        <table border="1">
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Username</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %} {% if user[3] != 'admin' %}
+            <tr>
+              <td>{{ user[1] }}</td>
+              <td>{{ user[2] }}</td>
+              <td>{{ user[3] }}</td>
+              <td>
+                <a
+                  href="{{ url_for('delete_user', user_id=user[0]) }}"
+                  class="cart-btn"
+                  style="
+                    background: red;
+                    margin: 0 10px;
+                    text-decoration: none;
+                    margin-left: -25px;
+                  "
+                >
+                  <i class="fas fa-trash-alt"></i> Delete
+                </a>
+              </td>
+            </tr>
+            {% endif %} {% endfor %}
+          </tbody>
+        </table>
+        <a href="/home" style="color: #f28123; text-decoration: none"> Home </a>
       </div>
     </section>
+
     <!-- end hero area -->
     <!-- For Flash -->
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>

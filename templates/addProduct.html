@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add product</title>
+
+    <!-- favicon -->
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="{{url_for('static',filename='assets/img/favicon.png')}}"
+    />
+    <!-- Form Styling And Flash -->
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='css/bootstrap.min.css')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='css/style.css')}}"
+    />
+    <link rel="stylesheet" href="../static/css/add_product.css" />
+  </head>
+  <body>
+    {% include 'includes/alert.html' %}
+    <div class="form">
+      <form
+        action="/addProduct"
+        method="POST"
+        class="product"
+        enctype="multipart/form-data"
+      >
+        <h1>Add product</h1>
+        <hr />
+        <div class="form-item">
+          <label for="">Product Name</label>
+          <input type="text" name="product-name" required />
+        </div>
+
+        <div class="form-item">
+          <label for="">Product price</label>
+          <input type="text" name="product-price" required />
+        </div>
+
+        <div class="form-item">
+          <label for="">Product image</label>
+          <input type="file" name="product-image" accept="image/*" required />
+        </div>
+
+        <input type="submit" value="Upload" />
+      </form>
+    </div>
+    <!-- For Flash -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/close-all-alerts.js') }}"></script>
+  </body>
+</html>

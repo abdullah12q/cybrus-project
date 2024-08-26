@@ -46,10 +46,10 @@ def get_user(connection,username):
     cursor.execute(query, (username,))
     return cursor.fetchone()
 
-def delete_user(connection,username):
+def delete_user(connection,user_id):
     cursor = connection.cursor()
-    query = 'DELETE FROM users WHERE username =?'
-    cursor.execute(query, (username,))
+    query = 'DELETE FROM users WHERE id = (?) '
+    cursor.execute(query, (user_id,))
     connection.commit()
 
 def get_all_users(connection):
@@ -61,21 +61,19 @@ def get_all_users(connection):
 
 # --------------------------------- DATABASE FOR PRODUCTS ----------------------------------
 
-
 def init_product(connection):
     cursor = connection.cursor()
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE,
+            name TEXT NOT NULL,
             price INTEGER NOT NULL,
             image_url TEXT
         )
     ''')
 
     connection.commit()
-
 
 def add_product(connection, name, price ,image_url=None):
     cursor = connection.cursor()
@@ -88,7 +86,6 @@ def get_product(connection, product_id):
     query = '''SELECT * FROM products WHERE id = ?'''
     cursor.execute(query, (product_id,))
     return cursor.fetchone()
-
 
 def get_all_products(connection):
     cursor = connection.cursor()
@@ -105,63 +102,59 @@ def delete_product(connection, product_id):
     cursor.execute(query, (product_id,))
     connection.commit()
 
-
 # --------------------------------- DATABASE FOR BUYING ----------------------------------
 
+def init_cart(connection):
+    cursor = connection.cursor()
 
+    create_table_query = '''
+    CREATE TABLE IF NOT EXISTS cart (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        product_id INTEGER NOT NULL,
+        quantity INTEGER DEFAULT 1,
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        FOREIGN KEY (product_id) REFERENCES products(id)
+    )
+    '''
 
+    cursor.execute(create_table_query)
+    connection.commit()
 
+def add_to_cart(connection, user_id, product_id, quantity=1):
+    cursor = connection.cursor()
 
+    insert_query = "INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)" 
+    cursor.execute(insert_query, (user_id, product_id, quantity))
 
+    connection.commit()
 
+def remove_from_cart(connection, user_id, product_id):
+    cursor = connection.cursor()
 
+    delete_query = "DELETE FROM cart WHERE user_id = ? AND product_id = ?"
+    cursor.execute(delete_query, (user_id, product_id))
 
+    connection.commit()
 
+def get_cart(connection, user_id):
+    cursor = connection.cursor()
 
+    select_query = '''        
+        SELECT  cart.product_id, products.name, products.price, products.image_url
+        FROM cart
+        JOIN products ON cart.product_id = products.id
+        WHERE cart.user_id = ?
+    '''
+    cursor.execute(select_query, (user_id,))
+    cart_items = cursor.fetchall()
 
+    return cart_items
 
+def clear_cart(connection, user_id):
+    cursor = connection.cursor()
 
+    delete_query = "DELETE FROM cart WHERE user_id = ?"
+    cursor.execute(delete_query, (user_id,))
 
-# def init_reviews(connection):
-#     cursor = connection.cursor()
-
-#     cursor.execute('''
-#         CREATE TABLE IF NOT EXISTS reviews (
-#             id INTEGER PRIMARY KEY AUTOINCREMENT,
-#             user_id INTEGER NOT NULL,
-#             restaurant_id INTEGER NOT NULL,
-#             rating INTEGER NOT NULL,
-#             review TEXT NOT NULL,
-#             timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-#             FOREIGN KEY (user_id) REFERENCES users (id),
-#             FOREIGN KEY (restaurant_id) REFERENCES restaurants (id)
-#         )
-#     ''')
-
-#     connection.commit()
-
-# def add_review(connection, user_id, restaurant_id, rating, review):
-#     cursor = connection.cursor()
-#     query = '''INSERT INTO reviews (user_id, restaurant_id, rating, review) VALUES (?, ?, ?, ?)'''
-#     cursor.execute(query, (user_id, restaurant_id, rating, review))
-#     connection.commit()
-
-# def get_reviews_for_restaurant(connection, restaurant_id):
-#     cursor = connection.cursor()
-#     query = '''
-#         SELECT  users.first_name, users.last_name, reviews.review, reviews.rating, reviews.timestamp
-#         FROM reviews
-#         JOIN users ON reviews.user_id = users.id
-#         WHERE reviews.restaurant_id = ?
-#     '''
-#     cursor.execute(query, (restaurant_id,))
-#     return cursor.fetchall()
-
-# def search_restaurants(connection, searchkey):
-#     cursor = connection.cursor()
-#     query = '''
-#         SELECT * FROM restaurants
-#         WHERE title like '%' || (?) || '%' or description like '%' || (?) || '%'
-#     '''
-#     cursor.execute(query, (searchkey,searchkey))
-#     return cursor.fetchall()
+    connection.commit()
