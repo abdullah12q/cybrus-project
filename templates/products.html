@@ -85,7 +85,12 @@
               </div>
               <!-- logo -->
               {% if 'username' in session %} {% if username !='admin'%}
-              <a href="/account" style="color: #f28123"> Profile </a>
+              <a
+                href="{{ url_for('account', username=session['username']) }}"
+                style="color: #f28123"
+              >
+                Profile
+              </a>
               <a
                 class="shopping-cart"
                 href="/cart"

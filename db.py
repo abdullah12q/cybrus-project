@@ -31,14 +31,14 @@ def seed_admin_user(connection):
     # Check if admin user exists
     admin_user = get_user(connection, admin_username)
     if not admin_user:
-        add_user(connection, '', '', admin_username, admin_password)
+        add_user(connection, '', '', admin_username, admin_password,'')
         print("Admin user seeded successfully.")
 
-def add_user(connection,first_name,last_name,username,password):
+def add_user(connection,first_name,last_name,username,password,photo_name):
     cursor = connection.cursor()
     hashed_password = utils.hash_password(password)
-    query = '''INSERT INTO users (first_name,last_name,username,password) VALUES (?,?,?,?)'''
-    cursor.execute(query, (first_name,last_name,username, hashed_password))
+    query = '''INSERT INTO users (first_name,last_name,username,password,photo_name) VALUES (?,?,?,?,?)'''
+    cursor.execute(query, (first_name,last_name,username, hashed_password, photo_name))
     connection.commit()
 
 def get_user(connection,username):

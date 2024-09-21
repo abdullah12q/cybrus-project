@@ -4,7 +4,6 @@ import db
 import utils
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-# from flask_login import login_user, current_user, logout_user, login_required
 import validators         
 import os
 import logging
@@ -45,7 +44,7 @@ def sign_up():
       return render_template('signup.html')
     
     else:
-      db.add_user(connection,first_name,last_name, username, password)
+      db.add_user(connection,first_name,last_name, username, password,"images.png")
       return redirect(url_for('login'))
 
   return render_template('signup.html')
@@ -84,9 +83,13 @@ def users():
 
 @app.route('/delete-user/id=<user_id>')
 def delete_user(user_id):
-  db.delete_user(connection, user_id)
-  flash('User deleted successfully', 'success')
-  return redirect(url_for('users'))
+  if 'username' in session and session['username'] == 'admin':
+    db.delete_user(connection, user_id)
+    flash('User deleted successfully', 'success')
+    return redirect(url_for('users'))
+  else:
+    flash('Unauthorized access', 'danger')
+    return redirect(url_for('login'))
 
 @app.route('/home')
 def products():
@@ -123,7 +126,6 @@ def add_to_cart(product_id):
   else:
     db.add_to_cart(connection, user[0], product_id)
     flash('The product added to cart successfully', 'success')
-    # return render_template('products.html', products = db.get_all_products(connection), username = session['username'])
     return redirect(url_for('products'))
 
 
@@ -134,7 +136,6 @@ def remove_from_cart(product_id):
   
   if not session.pop('bought_product', False):
     flash('The product removed from cart successfully', 'success')
-  # return render_template('cart.html', cart_products = db.get_cart(connection, user[0]))
   return redirect(url_for('cart'))
 
 @app.route('/buy_product/<int:product_id>', methods=['POST'])
@@ -161,7 +162,6 @@ def buy_cart(total_price):
       user = db.get_user(connection, username)
       db.clear_cart(connection, user[0])
       flash(f'Check Out Successful! You Paid ${total_price}', 'success')
-      # return render_template('cart.html', cart_products = db.get_cart(connection, user[0]))
       return redirect(url_for('cart'))
   return redirect(url_for('login'))
 #-------------------------------------------------------End Cart Routes-------------------------------------------------------
@@ -201,16 +201,21 @@ def add_product():
 
 @app.route('/delete-product/id=<product_id>')
 def delete_product(product_id):
-  db.delete_product(connection, product_id)
-  flash('Product deleted successfully', 'success')
-  return redirect(url_for('products'))
+  if 'username' in session and session['username'] == 'admin':
+    db.delete_product(connection, product_id)
+    flash('Product deleted successfully', 'success')
+    return redirect(url_for('products'))
+  else:
+    flash('Unauthorized access', 'danger')
+    return redirect(url_for('login'))
 
 @app.route('/account', methods=['GET', 'POST'])
 def account():
   if 'username' in session:
-
     if request.method == 'GET':
-      username = request.args.get('username', session['username'])
+      username = escape(request.args.get('username', session['username']))
+      if username != session['username']:
+        return "Unauthorized access"
       data = db.get_user(connection, username)
       if data:
         logging.debug(f"User data: {data}")  # or log the data to see its structure
@@ -219,17 +224,26 @@ def account():
         return "user not found"
     elif request.method == 'POST':
       form_type = request.form.get('form_name')
-      username = request.args.get('username', session['username'])  
+      username = escape(request.args.get('username', session['username']))
+      if username != session['username']:
+        return 'unathoruzed'
       if form_type == 'upload_photo':
         photo = request.files.get('profile_picture')
+
         if photo:
-          db.update_photo(connection, photo.filename, username)
-          photo.save(os.path.join(app.config['UPLOAD_FOLDER'], photo.filename))# static/uploads/xyz.png
+          if not validators.allowed_file_size(photo):
+            return f"Unallowed size."
+          elif not validators.allowed_file(photo.filename):
+            return f"Unallowed extention."
+          else:
+            db.update_photo(connection, photo.filename, username)
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], photo.filename))# static/uploads/xyz.png
+
       elif form_type == 'update_user_data':
         user_data = { 
-          "username": request.form.get('username'), 
-          "first_name": request.form.get('first_name'),
-          "last_name": request.form.get('last_name')
+          "username": escape(request.form.get('username')), 
+          "first_name": escape(request.form.get('first_name')),
+          "last_name": escape(request.form.get('last_name'))
         }
         db.update_user(connection , user_data)
 
@@ -250,6 +264,3 @@ if __name__ == "__main__":
   db.init_cart(connection)
   db.seed_admin_user(connection)
   app.run(debug=True,port=8000)
-
-
-#test comment
